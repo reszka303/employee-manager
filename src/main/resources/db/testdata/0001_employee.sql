@@ -1,0 +1,5 @@
+insert into employee (name, email, job_title, phone, image_url) values ('Lucas Samweyes', 'ksamweyes0@over-blog.com', 'Senior Full-Stack Developer', '300-245-4509', 'https://www.bootdey.com/app/webroot/img/Content/avatar/avatar7.png');
+insert into employee (name, email, job_title, phone, image_url) values ('Oliver Skerratt', 'rskerratt1@soundcloud.com', 'Senior Java Developer', '363-977-1893', 'https://www.bootdey.com/app/webroot/img/Content/avatar/avatar5.png');
+insert into employee (name, email, job_title, phone, image_url) values ('James Cowderoy', 'hcowderoy2@cocolog-nifty.com', 'Chief Executive Officer', '955-985-2702', 'https://www.bootdey.com/img/Content/avatar/avatar1.png');
+insert into employee (name, email, job_title, phone, image_url) values ('Barrie Rockcliffe', 'brockcliffe3@fema.gov', 'Senior Front-End Developer', '490-351-2899', 'https://www.bootdey.com/app/webroot/img/Content/avatar/avatar6.png');
+insert into employee (name, email, job_title, phone, image_url) values ('Krystle Feasley', 'kfeasley4@fda.gov', 'Secretary', '473-436-5477', 'https://www.bootdey.com/app/webroot/img/Content/avatar/avatar3.png');
