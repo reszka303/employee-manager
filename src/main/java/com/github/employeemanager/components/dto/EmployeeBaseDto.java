@@ -2,6 +2,7 @@ package com.github.employeemanager.components.dto;
 
 import lombok.*;
 
+@ToString
 @Setter
 @Getter
 @Builder
