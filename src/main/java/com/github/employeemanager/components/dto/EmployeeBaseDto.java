@@ -1,12 +1,14 @@
 package com.github.employeemanager.components.dto;
 
 import lombok.*;
+import lombok.experimental.SuperBuilder;
 
+@ToString
 @Setter
 @Getter
-@Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@SuperBuilder
 public abstract class EmployeeBaseDto {
 
     private Long id;
@@ -22,4 +24,5 @@ public abstract class EmployeeBaseDto {
     private String imageUrl;
 
     private String employeeCode;
+
 }
