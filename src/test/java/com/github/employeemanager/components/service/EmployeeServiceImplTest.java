@@ -5,6 +5,7 @@ import com.github.employeemanager.components.dto.EmployeeBaseDto;
 import com.github.employeemanager.components.dto.request.EmployeeRequestDto;
 import com.github.employeemanager.components.dto.response.EmployeeResponseDto;
 import com.github.employeemanager.components.exception.EmployeeNotFoundException;
+import com.github.employeemanager.components.mapper.EmployeeMapper;
 import com.github.employeemanager.components.repository.EmployeeRepository;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -47,6 +48,7 @@ class EmployeeServiceImplTest {
                 .id(1L)
                 .name("Lucas Samweyes")
                 .email("lsamweyes0@fda.com")
+                .jobTitle("Senior Full-Stack Developer")
                 .phone("300-245-4509")
                 .imageUrl("https://www.bootdey.com/app/webroot/img/Content/avatar/avatar7.png")
                 .employeeCode("2f0d3f6a-136c-49f5-8d4b-16ede1578873")
@@ -60,11 +62,13 @@ class EmployeeServiceImplTest {
                 .id(1L)
                 .name("Lucas Samweyes")
                 .email("lsamweyes0@fda.com")
+                .jobTitle("Senior Full-Stack Developer")
                 .phone("300-245-4509")
                 .imageUrl("https://www.bootdey.com/app/webroot/img/Content/avatar/avatar7.png")
                 .employeeCode("2f0d3f6a-136c-49f5-8d4b-16ede1578873")
                 .build();
     }
+
 
     @AfterEach
     public void cleanUp() {
@@ -112,14 +116,31 @@ class EmployeeServiceImplTest {
     public void shouldBeThrownEmployeeNotFoundExceptionWhenEmployeeIsNotFounded() {
 
         //given
-        employee = null;
-        given(repository.findById(null)).willReturn(Optional.ofNullable(employee));
+        request = getRequest();
+        given(repository.findById(request.getId())).willReturn(Optional.empty());
 
         //when
         //then
-        assertThatThrownBy( () -> service.findEmployeeById(null))
-                .isInstanceOf(EmployeeNotFoundException.class);
+        assertThatThrownBy( () -> service.findEmployeeById(request.getId()))
+                .isInstanceOf(EmployeeNotFoundException.class)
+                .hasMessage("No employee with " + request.getId() + " id");
     }
+
+    @Test
+    public void shouldReturnEmployeeResponseDtoWhenEmployeeIs() {
+
+        //given
+        employee = getEmployee();
+
+        //when
+        response = EmployeeMapper.toResponse(employee);
+
+        //then
+
+        assertThat(response).isInstanceOf(EmployeeResponseDto.class);
+        assertThat(response.getJobTitle()).isEqualTo("Senior Full-Stack Developer");
+    }
+
 
     private List<Employee> getListEmployee() {
 
