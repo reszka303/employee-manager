@@ -90,7 +90,7 @@ class EmployeeServiceImplTest {
 //        System.out.println(result);
         assertThat(result.get(2).getName()).isEqualTo("James Cowderoy")
                 .isInstanceOf(String.class);
-        assertThat(result.size()).isEqualTo(5);
+        assertThat(result.size()).isEqualTo(6);
         assertThat(result).isInstanceOf(List.class);
         assertThat(result.get(1)).isInstanceOf(EmployeeResponseDto.class);
     }
@@ -136,9 +136,24 @@ class EmployeeServiceImplTest {
         response = EmployeeMapper.toResponse(employee);
 
         //then
-
         assertThat(response).isInstanceOf(EmployeeResponseDto.class);
         assertThat(response.getJobTitle()).isEqualTo("Senior Full-Stack Developer");
+    }
+
+    @Test
+    public void shouldReturnEmployeeResponseDtoListByPartOfTheNameWhenEmployeeIsFounded() {
+
+        //given
+        String name = "samwe";
+        List<Employee> employees = getListEmployee();
+        given(repository.findAll()).willReturn(employees);
+
+        //when
+        List<EmployeeResponseDto> responses = service.findEmployeeByName(name);
+
+        //then
+        assertThat(responses.size()).isEqualTo(2);
+        assertThat(responses.get(1).getName()).isEqualTo("Olivier Samweyes");
     }
 
 
@@ -199,6 +214,18 @@ class EmployeeServiceImplTest {
                         "0f82f41d-aff7-40a8-8842-0b5c46f57763"
                 );
 
+        Employee olivierSamweyes =
+                new Employee(
+                        6L,
+                        "Olivier Samweyes",
+                        "lsamweyes0@fda.com",
+                        "Senior Full-Stack Developer",
+                        "300-245-4509",
+                        "https://www.bootdey.com/app/webroot/img/Content/avatar/avatar7.png",
+                        "2f0d3f6a-136c-49f5-8d4b-16ede1578873"
+
+                );
+
         List<Employee> list = new ArrayList<>();
 
         list.add(lucasSamweyes);
@@ -206,8 +233,10 @@ class EmployeeServiceImplTest {
         list.add(jamesCowderoy);
         list.add(barrieRockcliffe);
         list.add(krystleFeasley);
+        list.add(olivierSamweyes);
 
         return list;
+
     }
 
     private List<EmployeeResponseDto> getListEmployeeResponseDto() {
@@ -267,6 +296,18 @@ class EmployeeServiceImplTest {
                         "0f82f41d-aff7-40a8-8842-0b5c46f57763"
                 );
 
+        EmployeeResponseDto olivierSamweyes =
+                new EmployeeResponseDto(
+                        6L,
+                        "Olivier Samweyes",
+                        "lsamweyes0@fda.com",
+                        "Senior Full-Stack Developer",
+                        "300-245-4509",
+                        "https://www.bootdey.com/app/webroot/img/Content/avatar/avatar7.png",
+                        "2f0d3f6a-136c-49f5-8d4b-16ede1578873"
+
+                );
+
         List<EmployeeResponseDto> list = new ArrayList<>();
 
         list.add(lucasSamweyes);
@@ -274,8 +315,10 @@ class EmployeeServiceImplTest {
         list.add(jamesCowderoy);
         list.add(barrieRockcliffe);
         list.add(krystleFeasley);
+        list.add(olivierSamweyes);
 
         return list;
+
     }
 
 }

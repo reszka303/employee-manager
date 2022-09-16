@@ -13,7 +13,7 @@ public interface EmployeeService {
 
     EmployeeResponseDto findEmployeeById(Long id);
 
-    EmployeeResponseDto findEmployeeByName(String name);
+    List<EmployeeResponseDto> findEmployeeByName(String name);
 
     EmployeeResponseDto addEmployee(EmployeeRequestDto request);
 

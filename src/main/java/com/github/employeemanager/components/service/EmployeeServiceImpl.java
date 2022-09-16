@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -31,15 +32,21 @@ public class EmployeeServiceImpl implements EmployeeService {
     public EmployeeResponseDto findEmployeeById(Long id) {
 
         Optional<Employee> byId = repository.findById(id);
-        byId.orElseThrow( () -> new EmployeeNotFoundException("No employee with " + id + " id"));
+        byId.orElseThrow(() -> new EmployeeNotFoundException("No employee with " + id + " id"));
         Employee employee = byId.get();
 
         return EmployeeMapper.toResponse(employee);
     }
 
     @Override
-    public EmployeeResponseDto findEmployeeByName(String name) {
-        return null;
+    public List<EmployeeResponseDto> findEmployeeByName(String name) {
+
+        return repository
+                .findAll()
+                .stream()
+                .filter(employee -> employee.getName().toLowerCase().contains(name.toLowerCase()))
+                .map(EmployeeMapper::toResponse)
+                .toList();
     }
 
     @Override
