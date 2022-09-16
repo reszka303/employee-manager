@@ -4,6 +4,7 @@ import com.github.employeemanager.components.domain.Employee;
 import com.github.employeemanager.components.dto.EmployeeBaseDto;
 import com.github.employeemanager.components.dto.request.EmployeeRequestDto;
 import com.github.employeemanager.components.dto.response.EmployeeResponseDto;
+import com.github.employeemanager.components.exception.EmployeeNotFoundException;
 import com.github.employeemanager.components.repository.EmployeeRepository;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -17,8 +18,10 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.when;
@@ -37,6 +40,18 @@ class EmployeeServiceImplTest {
     private EmployeeRequestDto request;
 
     private EmployeeResponseDto response;
+
+    private Employee getEmployee() {
+
+        return Employee.builder()
+                .id(1L)
+                .name("Lucas Samweyes")
+                .email("lsamweyes0@fda.com")
+                .phone("300-245-4509")
+                .imageUrl("https://www.bootdey.com/app/webroot/img/Content/avatar/avatar7.png")
+                .employeeCode("2f0d3f6a-136c-49f5-8d4b-16ede1578873")
+                .build();
+    }
 
 
     private EmployeeRequestDto getRequest() {
@@ -57,7 +72,7 @@ class EmployeeServiceImplTest {
     }
 
     @Test
-    public void shouldReturnListAllEmployeeResponseDtoWhenEmployeesAre() {
+    public void shouldReturnListAllEmployeeResponseDtoWhenEmployeesAreFounded() {
 
         //given
         List<Employee> list = getListEmployee();
@@ -68,8 +83,42 @@ class EmployeeServiceImplTest {
         List<EmployeeResponseDto> result = service.getAllEmployees();
 
         //then
-        System.out.println(result);
-        assertThat(result.get(2).getName()).isEqualTo("James Cowderoy");
+//        System.out.println(result);
+        assertThat(result.get(2).getName()).isEqualTo("James Cowderoy")
+                .isInstanceOf(String.class);
+        assertThat(result.size()).isEqualTo(5);
+        assertThat(result).isInstanceOf(List.class);
+        assertThat(result.get(1)).isInstanceOf(EmployeeResponseDto.class);
+    }
+
+    @Test
+    public void shouldReturnEmployeeResponseDtoByIdWhenEmployeeIsFounded() {
+
+        //given
+        request = getRequest();
+        employee = getEmployee();
+        given(repository.findById(request.getId())).willReturn(Optional.of(employee));
+
+        //when
+        EmployeeResponseDto byId = service.findEmployeeById(request.getId());
+
+        //then
+        assertThat(byId.getName()).isEqualTo("Lucas Samweyes");
+        assertThat(byId.getEmail()).isEqualTo("lsamweyes0@fda.com");
+        assertThat(byId).isInstanceOf(EmployeeResponseDto.class);
+    }
+
+    @Test
+    public void shouldBeThrownEmployeeNotFoundExceptionWhenEmployeeIsNotFounded() {
+
+        //given
+        employee = null;
+        given(repository.findById(null)).willReturn(Optional.ofNullable(employee));
+
+        //when
+        //then
+        assertThatThrownBy( () -> service.findEmployeeById(null))
+                .isInstanceOf(EmployeeNotFoundException.class);
     }
 
     private List<Employee> getListEmployee() {
