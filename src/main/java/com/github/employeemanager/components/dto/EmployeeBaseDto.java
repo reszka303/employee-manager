@@ -3,7 +3,7 @@ package com.github.employeemanager.components.dto;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
-@ToString
+//@ToString
 @Setter
 @Getter
 @NoArgsConstructor

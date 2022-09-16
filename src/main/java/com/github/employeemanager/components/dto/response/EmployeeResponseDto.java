@@ -14,7 +14,7 @@ public class EmployeeResponseDto extends EmployeeBaseDto {
         super(id, name, email, jobTitle, phone, imageUrl, employeeCode);
     }
 
-    public EmployeeResponseDto() {}
+//    public EmployeeResponseDto() {}
 
 
 
