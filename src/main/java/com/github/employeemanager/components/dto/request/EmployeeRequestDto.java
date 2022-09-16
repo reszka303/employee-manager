@@ -14,6 +14,6 @@ public class EmployeeRequestDto extends EmployeeBaseDto {
         super(id, name, email, jobTitle, phone, imageUrl, employeeCode);
     }
 
-//    public EmployeeRequestDto() {}
+    public EmployeeRequestDto() {}
 
 }
