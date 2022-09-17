@@ -27,7 +27,8 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.isA;
-import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.*;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -174,7 +175,7 @@ class EmployeeServiceImplTest {
         response = service.addEmployee(request);
 
         //then
-        System.out.println(response);
+//        System.out.println(response);
         assertThat(response.getId()).isEqualTo(1L);
         assertThat(response.getName()).isEqualTo("Lucas Samweyes");
         assertThat(response).isInstanceOf(EmployeeResponseDto.class);
@@ -226,6 +227,37 @@ class EmployeeServiceImplTest {
                 .isInstanceOf(EmployeeNotFoundException.class)
                 .hasMessage("No employee with " + request.getId() + " id");
 
+    }
+
+    @Test
+    public void shouldDeleteEmployeeWhenEmployeeIs() {
+
+        //given
+        request = getRequest();
+        employee = getEmployee();
+        given(repository.findById(request.getId())).willReturn(Optional.of(employee));
+
+
+        //when
+        service.deleteEmployee(request.getId());
+
+        //then
+        then(repository).should(times(1)).deleteById(request.getId());
+    }
+
+    @Test
+    public void
+    shouldReturnEmployeeNotFoundExceptionWhenEmployeeIsNotFoundedByDeleteEmployeeMethod() {
+
+        //given
+        request = getRequest();
+        given(repository.findById(request.getId())).willReturn(Optional.empty());
+
+        //when
+        //then
+        assertThatThrownBy( () -> service.deleteEmployee(request.getId()))
+                .isInstanceOf(EmployeeNotFoundException.class)
+                .hasMessage("No employee with " + request.getId() + " id");
     }
 
 

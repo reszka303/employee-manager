@@ -68,7 +68,6 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     @Override
     public EmployeeResponseDto updateEmployee(EmployeeRequestDto request) {
-
         Optional<Employee> byId = repository.findById(request.getId());
         byId.orElseThrow( () ->  {
             throw new EmployeeNotFoundException("No employee with " + request.getId() + " id");
@@ -83,6 +82,11 @@ public class EmployeeServiceImpl implements EmployeeService {
     @Override
     public void deleteEmployee(Long id) {
 
+        Optional<Employee> byId = repository.findById(id);
+        byId.orElseThrow( () -> {
+            throw new EmployeeNotFoundException("No employee with " + id + " id");
+        });
 
+        repository.deleteById(id);
     }
 }
