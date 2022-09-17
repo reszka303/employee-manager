@@ -3,6 +3,7 @@ package com.github.employeemanager.components.service;
 import com.github.employeemanager.components.domain.Employee;
 import com.github.employeemanager.components.dto.request.EmployeeRequestDto;
 import com.github.employeemanager.components.dto.response.EmployeeResponseDto;
+import com.github.employeemanager.components.exception.EmployeeCodeDuplicateException;
 import com.github.employeemanager.components.exception.EmployeeNotFoundException;
 import com.github.employeemanager.components.mapper.EmployeeMapper;
 import com.github.employeemanager.components.repository.EmployeeRepository;
@@ -10,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -32,7 +34,8 @@ public class EmployeeServiceImpl implements EmployeeService {
     public EmployeeResponseDto findEmployeeById(Long id) {
 
         Optional<Employee> byId = repository.findById(id);
-        byId.orElseThrow(() -> new EmployeeNotFoundException("No employee with " + id + " id"));
+        byId.orElseThrow( () -> new EmployeeNotFoundException("No employee with " + id + " id"));
+
         Employee employee = byId.get();
 
         return EmployeeMapper.toResponse(employee);
@@ -51,7 +54,16 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     @Override
     public EmployeeResponseDto addEmployee(EmployeeRequestDto request) {
-        return null;
+
+        Optional<Employee> byEmployeeCode = repository.findEmployeeByEmployeeCode(request.getEmployeeCode());
+        byEmployeeCode.ifPresent(ifEmployeeCodeDuplicateIs -> {
+            throw new EmployeeCodeDuplicateException();
+        });
+
+        Employee employee = EmployeeMapper.toEntity(request);
+        repository.save(employee);
+
+        return EmployeeMapper.toResponse(employee);
     }
 
     @Override

@@ -4,6 +4,7 @@ import com.github.employeemanager.components.domain.Employee;
 import com.github.employeemanager.components.dto.EmployeeBaseDto;
 import com.github.employeemanager.components.dto.request.EmployeeRequestDto;
 import com.github.employeemanager.components.dto.response.EmployeeResponseDto;
+import com.github.employeemanager.components.exception.EmployeeCodeDuplicateException;
 import com.github.employeemanager.components.exception.EmployeeNotFoundException;
 import com.github.employeemanager.components.mapper.EmployeeMapper;
 import com.github.employeemanager.components.repository.EmployeeRepository;
@@ -24,6 +25,8 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.isA;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.when;
 
@@ -156,6 +159,41 @@ class EmployeeServiceImplTest {
         assertThat(responses.get(1).getName()).isEqualTo("Olivier Samweyes");
     }
 
+    @Test
+    public void shouldReturnEmployeeResponseDtoWhenEmployeeIsSuccessfullySaved() {
+
+        //given
+        request = getRequest();
+        employee = getEmployee();
+        given(repository.findEmployeeByEmployeeCode(request.getEmployeeCode()))
+                .willReturn(Optional.empty());
+        given(repository.save(isA(Employee.class))).willReturn(employee);
+
+        //when
+        response = service.addEmployee(request);
+
+        //then
+        System.out.println(response);
+        assertThat(response.getId()).isEqualTo(1L);
+        assertThat(response.getName()).isEqualTo("Lucas Samweyes");
+        assertThat(response).isInstanceOf(EmployeeResponseDto.class);
+    }
+
+    @Test
+    public void shouldBeThrownEmployeeCodeDuplicateExceptionWhenDuplicateCodeIsFounded() {
+
+        //given
+        request = getRequest();
+        employee = getEmployee();
+        given(repository.findEmployeeByEmployeeCode(request.getEmployeeCode()))
+                .willReturn(Optional.of(employee));
+
+        //when
+        //then
+        assertThatThrownBy( () -> service.addEmployee(request))
+                .isInstanceOf(EmployeeCodeDuplicateException.class);
+    }
+
 
     private List<Employee> getListEmployee() {
 
@@ -221,7 +259,7 @@ class EmployeeServiceImplTest {
                         "lsamweyes0@fda.com",
                         "Senior Full-Stack Developer",
                         "300-245-4509",
-                        "https://www.bootdey.com/app/webroot/img/Content/avatar/avatar7.png",
+                        "https://www.bootdey.com/img/Content/avatar/avatar4.png",
                         "2f0d3f6a-136c-49f5-8d4b-16ede1578873"
 
                 );
