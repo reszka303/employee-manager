@@ -22,9 +22,11 @@ import java.util.List;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -85,7 +87,8 @@ class EmployeeResourceMvcTest {
         //then
         result.andExpect(status().isOk())
                 .andDo(print())
-                .andExpect(jsonPath("$.size()", is(employees.size())));
+                .andExpect(jsonPath("$.size()", is(employees.size())))
+                .andReturn();
     }
 
     @Test
@@ -103,7 +106,8 @@ class EmployeeResourceMvcTest {
         //then
         result.andExpect(status().isOk())
                 .andDo(print())
-                .andExpect(jsonPath("$.size()", is(employees.size())));
+                .andExpect(jsonPath("$.size()", is(employees.size())))
+                .andReturn();
     }
 
     @Test
@@ -123,7 +127,8 @@ class EmployeeResourceMvcTest {
         result.andExpect(status().isOk())
                 .andDo(print())
                 .andExpect(jsonPath("$.id", is(jsonId)))
-                .andExpect(jsonPath("$.name", is(response.getName())));
+                .andExpect(jsonPath("$.name", is(response.getName())))
+                .andReturn();
     }
 
     @Test
@@ -139,7 +144,41 @@ class EmployeeResourceMvcTest {
                 .contentType(APPLICATION_JSON));
 
         //then
-        result.andExpect(status().isNotFound()).andDo(print());
+        result.andExpect(status().isNotFound()).andDo(print()).andReturn();
+    }
+
+    @Test
+    public void shouldReturnEmployeeResponseDtoWhenAddingIsSuccessfullyFinished() throws Exception {
+
+        //given
+        response = getEmployeeResponseDtoNullId();
+        given(service.addEmployee(any(EmployeeRequestDto.class))).willReturn(response);
+
+        //when
+        ResultActions result = mockMvc.perform(post("/api/employees")
+                .contentType(APPLICATION_JSON)
+                .content(mapper.writeValueAsString(response)));
+
+        //then
+        result.andExpect(status().isCreated())
+                .andDo(print())
+                .andExpect(jsonPath("$.id", is(response.getId())))
+                .andExpect(jsonPath("$.name", is(response.getName())))
+                .andReturn();
+    }
+
+    @Test
+    public void shouldReturnResponseStatusExceptionWhenIdIsSet() throws Exception {
+
+        //given
+        response = getEmployeeResponseDto();
+        given(service.addEmployee(any(EmployeeRequestDto.class))).willReturn(response);
+
+        //when
+        ResultActions result = mockMvc.perform(post("/api/employees"));
+
+        //then
+        result.andExpect(status().isBadRequest()).andDo(print()).andReturn();
     }
 
     private List<EmployeeResponseDto> getListEmployeeWithNameParameter() {

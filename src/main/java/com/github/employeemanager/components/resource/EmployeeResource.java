@@ -1,5 +1,6 @@
 package com.github.employeemanager.components.resource;
 
+import com.github.employeemanager.components.dto.request.EmployeeRequestDto;
 import com.github.employeemanager.components.dto.response.EmployeeResponseDto;
 import com.github.employeemanager.components.service.EmployeeService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -7,7 +8,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+import org.springframework.web.util.UriComponentsBuilder;
 
+import java.net.URI;
 import java.util.List;
 
 import static org.springframework.http.HttpStatus.*;
@@ -48,7 +52,26 @@ public class EmployeeResource {
         } else {
             return ResponseEntity.notFound().build();
         }
+    }
 
+    @PostMapping
+    public ResponseEntity<EmployeeResponseDto> addEmployee(
+            @RequestBody EmployeeRequestDto request) {
+
+        if (request.getId() != null) {
+            throw new ResponseStatusException(
+                    BAD_REQUEST, "Employee shouldn't have id set before saving");
+        }
+
+        EmployeeResponseDto response = service.addEmployee(request);
+
+        URI location = ServletUriComponentsBuilder
+                .fromCurrentRequest()
+                .path("/{id}")
+                .buildAndExpand(response.getId())
+                .toUri();
+
+        return ResponseEntity.created(location).body(response);
     }
 
 }

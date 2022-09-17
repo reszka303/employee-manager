@@ -7,6 +7,7 @@ import com.github.employeemanager.components.exception.EmployeeCodeDuplicateExce
 import com.github.employeemanager.components.exception.EmployeeNotFoundException;
 import com.github.employeemanager.components.mapper.EmployeeMapper;
 import com.github.employeemanager.components.repository.EmployeeRepository;
+import org.hibernate.id.UUIDGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -14,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
@@ -56,6 +58,9 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     @Override
     public EmployeeResponseDto addEmployee(EmployeeRequestDto request) {
+
+        String uuid = UUID.randomUUID().toString();
+        request.setEmployeeCode(uuid);
 
         Optional<Employee> byEmployeeCode = repository.findEmployeeByEmployeeCode(request.getEmployeeCode());
         byEmployeeCode.ifPresent(ifEmployeeCodeDuplicateIs -> {
