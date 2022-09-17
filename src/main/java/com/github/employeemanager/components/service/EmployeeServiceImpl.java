@@ -7,6 +7,7 @@ import com.github.employeemanager.components.exception.EmployeeCodeDuplicateExce
 import com.github.employeemanager.components.exception.EmployeeNotFoundException;
 import com.github.employeemanager.components.mapper.EmployeeMapper;
 import com.github.employeemanager.components.repository.EmployeeRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,6 +22,7 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     private final EmployeeRepository repository;
 
+    @Autowired
     public EmployeeServiceImpl(EmployeeRepository repository) {
         this.repository = repository;
     }
@@ -31,7 +33,7 @@ public class EmployeeServiceImpl implements EmployeeService {
     }
 
     @Override
-    public EmployeeResponseDto findEmployeeById(Long id) {
+    public EmployeeResponseDto getEmployeeById(Long id) {
 
         Optional<Employee> byId = repository.findById(id);
         byId.orElseThrow( () -> new EmployeeNotFoundException("No employee with " + id + " id"));
@@ -42,7 +44,7 @@ public class EmployeeServiceImpl implements EmployeeService {
     }
 
     @Override
-    public List<EmployeeResponseDto> findEmployeeByName(String name) {
+    public List<EmployeeResponseDto> getEmployeeByName(String name) {
 
         return repository
                 .findAll()
@@ -68,6 +70,7 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     @Override
     public EmployeeResponseDto updateEmployee(EmployeeRequestDto request) {
+
         Optional<Employee> byId = repository.findById(request.getId());
         byId.orElseThrow( () ->  {
             throw new EmployeeNotFoundException("No employee with " + request.getId() + " id");
@@ -89,4 +92,5 @@ public class EmployeeServiceImpl implements EmployeeService {
 
         repository.deleteById(id);
     }
+
 }

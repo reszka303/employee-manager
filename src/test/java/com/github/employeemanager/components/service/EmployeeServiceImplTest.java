@@ -1,7 +1,6 @@
 package com.github.employeemanager.components.service;
 
 import com.github.employeemanager.components.domain.Employee;
-import com.github.employeemanager.components.dto.EmployeeBaseDto;
 import com.github.employeemanager.components.dto.request.EmployeeRequestDto;
 import com.github.employeemanager.components.dto.response.EmployeeResponseDto;
 import com.github.employeemanager.components.exception.EmployeeCodeDuplicateException;
@@ -9,13 +8,10 @@ import com.github.employeemanager.components.exception.EmployeeNotFoundException
 import com.github.employeemanager.components.mapper.EmployeeMapper;
 import com.github.employeemanager.components.repository.EmployeeRepository;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.BDDMockito;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.ArrayList;
@@ -24,12 +20,10 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.isA;
 import static org.mockito.BDDMockito.*;
 import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class EmployeeServiceImplTest {
@@ -108,7 +102,7 @@ class EmployeeServiceImplTest {
         given(repository.findById(request.getId())).willReturn(Optional.of(employee));
 
         //when
-        EmployeeResponseDto byId = service.findEmployeeById(request.getId());
+        EmployeeResponseDto byId = service.getEmployeeById(request.getId());
 
         //then
         assertThat(byId.getName()).isEqualTo("Lucas Samweyes");
@@ -126,7 +120,7 @@ class EmployeeServiceImplTest {
 
         //when
         //then
-        assertThatThrownBy( () -> service.findEmployeeById(request.getId()))
+        assertThatThrownBy( () -> service.getEmployeeById(request.getId()))
                 .isInstanceOf(EmployeeNotFoundException.class)
                 .hasMessage("No employee with " + request.getId() + " id");
     }
@@ -154,7 +148,7 @@ class EmployeeServiceImplTest {
         given(repository.findAll()).willReturn(employees);
 
         //when
-        List<EmployeeResponseDto> responses = service.findEmployeeByName(name);
+        List<EmployeeResponseDto> responses = service.getEmployeeByName(name);
 
         //then
         assertThat(responses.size()).isEqualTo(2);
