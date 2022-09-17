@@ -38,4 +38,17 @@ public class EmployeeResource {
         return new ResponseEntity<>(users, OK);
     }
 
+    @GetMapping("{id}")
+    public ResponseEntity<EmployeeResponseDto> getEmployeeById(@PathVariable Long id) {
+
+        EmployeeResponseDto response = service.getEmployeeById(id);
+
+        if (response.getId() != null) {
+            return new ResponseEntity<>(response, OK);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+
+    }
+
 }

@@ -45,6 +45,32 @@ class EmployeeResourceMvcTest {
 
     private EmployeeResponseDto response;
 
+    private EmployeeResponseDto getEmployeeResponseDto() {
+
+        return EmployeeResponseDto.builder()
+                .id(1L)
+                .name("Lucas Samweyes")
+                .email("lsamweyes0@fda.com")
+                .jobTitle("Senior Full-Stack Developer")
+                .phone("300-245-4509")
+                .imageUrl("https://www.bootdey.com/app/webroot/img/Content/avatar/avatar7.png")
+                .employeeCode("2f0d3f6a-136c-49f5-8d4b-16ede1578873")
+                .build();
+    }
+
+    private EmployeeResponseDto getEmployeeResponseDtoNullId() {
+
+        return EmployeeResponseDto.builder()
+                .id(null)
+                .name("Lucas Samweyes")
+                .email("lsamweyes0@fda.com")
+                .jobTitle("Senior Full-Stack Developer")
+                .phone("300-245-4509")
+                .imageUrl("https://www.bootdey.com/app/webroot/img/Content/avatar/avatar7.png")
+                .employeeCode("2f0d3f6a-136c-49f5-8d4b-16ede1578873")
+                .build();
+    }
+
     @Test
     public void shouldReturnAllEmployeesWhenThereIsNoRequestParameter() throws Exception {
 
@@ -78,6 +104,42 @@ class EmployeeResourceMvcTest {
         result.andExpect(status().isOk())
                 .andDo(print())
                 .andExpect(jsonPath("$.size()", is(employees.size())));
+    }
+
+    @Test
+    public void shouldReturnEmployeeResponseDtoWhenIdIsNotNull() throws Exception {
+
+        //given
+        Long id = 1L;
+        int jsonId = 1;
+        response = getEmployeeResponseDto();
+        given(service.getEmployeeById(id)).willReturn(response);
+
+        //when
+        ResultActions result = mockMvc.perform(get("/api/employees/{id}", id)
+                .contentType(APPLICATION_JSON));
+
+        //then
+        result.andExpect(status().isOk())
+                .andDo(print())
+                .andExpect(jsonPath("$.id", is(jsonId)))
+                .andExpect(jsonPath("$.name", is(response.getName())));
+    }
+
+    @Test
+    public void shouldReturnNotFoundEmployeeResponseDtoStatusWhenIdIsNull() throws Exception {
+
+        //given
+        Long id = 1L;
+        response = getEmployeeResponseDtoNullId();
+        given(service.getEmployeeById(id)).willReturn(response);
+
+        //when
+        ResultActions result = mockMvc.perform(get("/api/employees/{id}", id)
+                .contentType(APPLICATION_JSON));
+
+        //then
+        result.andExpect(status().isNotFound()).andDo(print());
     }
 
     private List<EmployeeResponseDto> getListEmployeeWithNameParameter() {
