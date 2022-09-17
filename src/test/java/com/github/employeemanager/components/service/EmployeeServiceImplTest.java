@@ -116,7 +116,8 @@ class EmployeeServiceImplTest {
     }
 
     @Test
-    public void shouldBeThrownEmployeeNotFoundExceptionWhenEmployeeIsNotFounded() {
+    public void
+    shouldBeThrownEmployeeNotFoundExceptionWhenEmployeeIsNotFoundedByFindEmployeeByIdMethod() {
 
         //given
         request = getRequest();
@@ -192,6 +193,39 @@ class EmployeeServiceImplTest {
         //then
         assertThatThrownBy( () -> service.addEmployee(request))
                 .isInstanceOf(EmployeeCodeDuplicateException.class);
+    }
+
+    @Test
+    public void shouldReturnEmployeeResponseDtoWhenEmployeeIsSuccessfullyUpdated() {
+
+        //given
+        request = getRequest();
+        employee = getEmployee();
+        given(repository.findById(request.getId())).willReturn(Optional.of(employee));
+
+        //when
+        response= service.updateEmployee(request);
+
+        //then
+        assertThat(response.getId()).isEqualTo(1L);
+        assertThat(response.getName()).isEqualTo("Lucas Samweyes");
+        assertThat(response).isInstanceOf(EmployeeResponseDto.class);
+    }
+
+    @Test
+    public void
+    shouldBeThrownEmployeeNotFoundExceptionWhenEmployeeIsNotFoundedByUpdateEmployeeMethod() {
+
+        //given
+        request = getRequest();
+        given(repository.findById(request.getId())).willReturn(Optional.empty());
+
+        //when
+        //then
+        assertThatThrownBy( () -> service.updateEmployee(request))
+                .isInstanceOf(EmployeeNotFoundException.class)
+                .hasMessage("No employee with " + request.getId() + " id");
+
     }
 
 

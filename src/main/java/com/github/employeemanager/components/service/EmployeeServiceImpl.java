@@ -68,11 +68,21 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     @Override
     public EmployeeResponseDto updateEmployee(EmployeeRequestDto request) {
-        return null;
+
+        Optional<Employee> byId = repository.findById(request.getId());
+        byId.orElseThrow( () ->  {
+            throw new EmployeeNotFoundException("No employee with " + request.getId() + " id");
+        });
+
+        Employee employee = EmployeeMapper.toEntity(request);
+        repository.save(employee);
+
+        return EmployeeMapper.toResponse(employee);
     }
 
     @Override
     public void deleteEmployee(Long id) {
+
 
     }
 }
