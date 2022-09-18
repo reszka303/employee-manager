@@ -1,5 +1,6 @@
 package com.github.employeemanager.components.resource;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.employeemanager.components.domain.Employee;
 import com.github.employeemanager.components.dto.request.EmployeeRequestDto;
@@ -25,8 +26,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -168,7 +168,7 @@ class EmployeeResourceMvcTest {
     }
 
     @Test
-    public void shouldReturnResponseStatusExceptionWhenIdIsSet() throws Exception {
+    public void shouldReturnBadRequestWhenIdIsSet() throws Exception {
 
         //given
         response = getEmployeeResponseDto();
@@ -176,6 +176,52 @@ class EmployeeResourceMvcTest {
 
         //when
         ResultActions result = mockMvc.perform(post("/api/employees"));
+
+        //then
+        result.andExpect(status().isBadRequest()).andDo(print()).andReturn();
+    }
+
+    @Test
+    public void shouldReturnEmployeeResponseDtoWhenEmployeeIsSuccessfullyUpdated() throws Exception {
+
+        //given
+        response = getEmployeeResponseDto();
+        given(service.getEmployeeById(response.getId())).willReturn(response);
+
+        response.setName("Patrick Vangelis");
+        response.setJobTitle("MySql Database Developer");
+        given(service.updateEmployee(any(EmployeeRequestDto.class))).willReturn(response);
+
+        //when
+        ResultActions result = mockMvc.perform(put("/api/employees/{id}", response.getId())
+                .contentType(APPLICATION_JSON)
+                .content(mapper.writeValueAsString(response)));
+
+        //then
+        result.andExpect(status().isOk())
+                .andDo(print())
+                .andExpect(jsonPath("$.name", is(response.getName())))
+                .andExpect(jsonPath("$.jobTitle", is(response.getJobTitle())))
+                .andReturn();
+    }
+
+    @Test
+    public void
+    shouldReturnBadRequestWhenIdPathResourceIsNotNullWithIdRequest() throws Exception {
+
+        //given
+        Long idPathResource = 2L;
+        response = getEmployeeResponseDto();
+        given(service.getEmployeeById(response.getId())).willReturn(response);
+
+        response.setName("Patrick Vangelis");
+        response.setJobTitle("MySql Database Developer");
+        given(service.updateEmployee(any(EmployeeRequestDto.class))).willReturn(response);
+
+        //when
+        ResultActions result = mockMvc.perform(put("/api/employees/{id}", idPathResource)
+                .contentType(APPLICATION_JSON)
+                .content(mapper.writeValueAsString(response)));
 
         //then
         result.andExpect(status().isBadRequest()).andDo(print()).andReturn();

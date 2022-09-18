@@ -27,7 +27,7 @@ public class EmployeeResource {
         this.service = service;
     }
 
-    @GetMapping
+    @GetMapping("")
     public ResponseEntity<List<EmployeeResponseDto>> getEmployees(
             @RequestParam(required = false) String name) {
 
@@ -42,7 +42,7 @@ public class EmployeeResource {
         return new ResponseEntity<>(users, OK);
     }
 
-    @GetMapping("{id}")
+    @GetMapping("/{id}")
     public ResponseEntity<EmployeeResponseDto> getEmployeeById(@PathVariable Long id) {
 
         EmployeeResponseDto response = service.getEmployeeById(id);
@@ -54,7 +54,7 @@ public class EmployeeResource {
         }
     }
 
-    @PostMapping
+    @PostMapping("")
     public ResponseEntity<EmployeeResponseDto> addEmployee(
             @RequestBody EmployeeRequestDto request) {
 
@@ -72,6 +72,22 @@ public class EmployeeResource {
                 .toUri();
 
         return ResponseEntity.created(location).body(response);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<EmployeeResponseDto> updateEmployee(
+            @PathVariable Long id, @RequestBody EmployeeRequestDto request) {
+
+        if (!request.getId().equals(id)) {
+            throw new ResponseStatusException(
+                    BAD_REQUEST,
+                    "Employee's id should be equal with id in the path resource"
+            );
+        }
+
+        EmployeeResponseDto response = service.updateEmployee(request);
+
+        return new ResponseEntity<>(response, OK);
     }
 
 }

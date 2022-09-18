@@ -69,7 +69,6 @@ public class EmployeeServiceImpl implements EmployeeService {
 
         Employee employee = EmployeeMapper.toEntity(request);
         repository.save(employee);
-
         return EmployeeMapper.toResponse(employee);
     }
 
@@ -83,7 +82,6 @@ public class EmployeeServiceImpl implements EmployeeService {
 
         Employee employee = EmployeeMapper.toEntity(request);
         repository.save(employee);
-
         return EmployeeMapper.toResponse(employee);
     }
 
