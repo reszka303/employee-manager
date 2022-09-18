@@ -1,30 +1,23 @@
 package com.github.employeemanager.components.resource;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.github.employeemanager.components.domain.Employee;
 import com.github.employeemanager.components.dto.request.EmployeeRequestDto;
 import com.github.employeemanager.components.dto.response.EmployeeResponseDto;
 import com.github.employeemanager.components.service.EmployeeServiceImpl;
 import org.junit.jupiter.api.Test;
-import org.mockito.BDDMockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import static org.hamcrest.CoreMatchers.is;
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.willDoNothing;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -175,7 +168,9 @@ class EmployeeResourceMvcTest {
         given(service.addEmployee(any(EmployeeRequestDto.class))).willReturn(response);
 
         //when
-        ResultActions result = mockMvc.perform(post("/api/employees"));
+        ResultActions result = mockMvc.perform(post("/api/employees")
+                .contentType(APPLICATION_JSON)
+                .content(mapper.writeValueAsString(response)));
 
         //then
         result.andExpect(status().isBadRequest()).andDo(print()).andReturn();
@@ -225,6 +220,21 @@ class EmployeeResourceMvcTest {
 
         //then
         result.andExpect(status().isBadRequest()).andDo(print()).andReturn();
+    }
+
+    @Test
+    public void shouldDeleteEmployeeWhenIdIsEqualWithEmployeeId() throws Exception {
+
+        //given
+        response = getEmployeeResponseDto();
+        willDoNothing().given(service).deleteEmployee(response.getId());
+
+        //when
+        ResultActions result = mockMvc.perform(delete("/api/employees/{id}", response.getId())
+                .contentType(APPLICATION_JSON));
+
+        //then
+        result.andExpect(status().isNoContent()).andDo(print());
     }
 
     private List<EmployeeResponseDto> getListEmployeeWithNameParameter() {

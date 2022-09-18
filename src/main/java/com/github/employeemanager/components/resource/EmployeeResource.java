@@ -4,12 +4,10 @@ import com.github.employeemanager.components.dto.request.EmployeeRequestDto;
 import com.github.employeemanager.components.dto.response.EmployeeResponseDto;
 import com.github.employeemanager.components.service.EmployeeService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
-import org.springframework.web.util.UriComponentsBuilder;
 
 import java.net.URI;
 import java.util.List;
@@ -88,6 +86,14 @@ public class EmployeeResource {
         EmployeeResponseDto response = service.updateEmployee(request);
 
         return new ResponseEntity<>(response, OK);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteEmployee(@PathVariable Long id) {
+
+        service.deleteEmployee(id);
+
+        return ResponseEntity.noContent().build();
     }
 
 }

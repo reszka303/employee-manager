@@ -38,7 +38,7 @@ public class EmployeeServiceImpl implements EmployeeService {
     public EmployeeResponseDto getEmployeeById(Long id) {
 
         Optional<Employee> byId = repository.findById(id);
-        byId.orElseThrow( () -> new EmployeeNotFoundException("No employee with " + id + " id"));
+        byId.orElseThrow( () -> new EmployeeNotFoundException("No employee with id " + id));
 
         Employee employee = byId.get();
 
@@ -77,7 +77,7 @@ public class EmployeeServiceImpl implements EmployeeService {
 
         Optional<Employee> byId = repository.findById(request.getId());
         byId.orElseThrow( () ->  {
-            throw new EmployeeNotFoundException("No employee with " + request.getId() + " id");
+            throw new EmployeeNotFoundException("No employee with id " + request.getId());
         });
 
         Employee employee = EmployeeMapper.toEntity(request);
@@ -90,7 +90,7 @@ public class EmployeeServiceImpl implements EmployeeService {
 
         Optional<Employee> byId = repository.findById(id);
         byId.orElseThrow( () -> {
-            throw new EmployeeNotFoundException("No employee with " + id + " id");
+            throw new EmployeeNotFoundException("No employee with id " + id);
         });
 
         repository.deleteById(id);
