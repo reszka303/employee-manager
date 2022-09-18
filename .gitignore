@@ -35,5 +35,3 @@ build/
 mvnw.cmd
 employee-manager.iml
 mvnw
-
-src/test/java/test_coverage
