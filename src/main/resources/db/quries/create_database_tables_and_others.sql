@@ -5,6 +5,7 @@ CREATE TABLE employee (
     name VARCHAR(70) NOT NULL,
     email VARCHAR(70) UNIQUE,
     job_title VARCHAR(70) NOT NULL,
-    phone VARCHAR(70),
-    image_url VARCHAR(70)
+    phone VARCHAR(20),
+    image_url VARCHAR(70),
+    employee_code VARCHAR(36) UNIQUE
 );
